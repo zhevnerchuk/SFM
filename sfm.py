@@ -4,6 +4,7 @@
 
 from scipy.stats import norm
 from scipy.optimize import minimize
+import numpy as np
 
 class SFM(object):
     '''Class solving reconstruction optimization problem
@@ -14,12 +15,11 @@ class SFM(object):
 
     '''
 
-    def __init__(self, tracks, focal_distance):
+    def __init__(self, tracks, focal_distance, num_cameras):
         self.tracks = tracks
         self.num_points = len(tracks)
-        self.poses = poses
-        self.num_cameras = len(poses)
         self.focal_distance = focal_distance
+        self.num_cameras = num_cameras
         self.type = 'ml'
         
     def _vec_to_coords(self, X):
@@ -76,7 +76,7 @@ class SFM(object):
                 
         return -log_likelihood
     
-    def reconstruct(self, points_coords0, cameras_coords0, reconstruction_type='ml', **kwargs):
+    def reconstruct(self, points_coords0, cameras_coords0, reconstruction_type='ml', kwargs={}):
         self.type = reconstruction_type
         vec0 = self._coords_to_vec(points_coords0, cameras_coords0)
         minimize(self.neg_log_likelihood, vec0, **kwargs)
